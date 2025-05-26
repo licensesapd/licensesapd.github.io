@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BBCode Generator - Certificate Application</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body class="container py-5">
+  <h2 class="text-center mb-4">Certificate Application BBCode Generator</h2>
+  <form id="bbcode-form">
+    <div class="mb-3">
+      <label class="form-label">Nama Lengkap:</label>
+      <input type="text" name="fullname" class="form-control">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Jenis Kelamin:</label>
+      <select name="gender" class="form-control">
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+      </select>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Tanggal Lahir:</label>
+      <input type="text" name="dob" id="dob" class="form-control" placeholder="DD/MM/YYYY" inputmode="numeric">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Tempat Lahir:</label>
+      <input type="text" name="pob" class="form-control">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Alamat:</label>
+      <input type="text" name="address" class="form-control">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Nomor Telepon:</label>
+      <input type="text" name="phone" class="form-control">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Pekerjaan:</label>
+      <input type="text" name="occupation" class="form-control">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Purpose:</label>
+      <input type="text" name="purpose" class="form-control">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Tanggal Hari Ini:</label>
+      <input type="text" name="date" id="date" class="form-control" placeholder="DD/MM/YYYY" inputmode="numeric">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Tanda Tangan:</label>
+      <input type="text" name="signature" class="form-control" placeholder="Nama_Lengkap">
+    </div>
+    <button type="button" id="generate" class="btn btn-primary">Generate BBCode</button>
+    <button type="button" id="copy" class="btn btn-secondary ms-2">Copy</button>
+  </form>
+
+  <pre id="result" class="mt-4 p-3 bg-light border rounded"></pre>
+
+  <script>
+    function autoFormatDate(input) {
+      input.addEventListener('input', function () {
+        let val = this.value.replace(/\D/g, '').slice(0, 8);
+        if (val.length >= 5) {
+          this.value = val.slice(0, 2) + '/' + val.slice(2, 4) + '/' + val.slice(4);
+        } else if (val.length >= 3) {
+          this.value = val.slice(0, 2) + '/' + val.slice(2);
+        } else {
+          this.value = val;
+        }
+      });
+    }
+
+    autoFormatDate(document.getElementById('dob'));
+    autoFormatDate(document.getElementById('date'));
+
+    document.getElementById('generate').addEventListener('click', () => {
+      const form = document.forms['bbcode-form'];
+      const fullname = form['fullname'].value;
+      const gender = form['gender'].value;
+      const dob = form['dob'].value;
+      const pob = form['pob'].value;
+      const address = form['address'].value;
+      const phone = form['phone'].value;
+      const occupation = form['occupation'].value;
+      const purpose = form['purpose'].value;
+      const date = form['date'].value;
+      const signature = form['signature'].value;
+
+      const bbcode = `[divbox=white][align=center][img]https://i.imgur.com/bHbMbUf.png[/img][/align]
+[divbox=#012849][color=white][align=center]PERSONAL INFORMATION[/align][/color][/divbox]
+
+[list]
+[*] [b]Full Name:[/b] ${fullname}
+[*] [b]Date of Birth :[/b] ${dob}
+[*] [b]Place of Birth :[/b] ${pob}
+[*] [b]Gender :[/b] ${gender}
+[*] [b]Current Address :[/b] ${address}
+[*] [b]Phone Number :[/b] ${phone}
+[*] [b]Nationality :[/b] San Andreas
+[*] [b]Occupation :[/b] ${occupation}
+[/list]
+
+[divbox=#012849][color=white][align=center]ADDITIONAL INFORMATION[/align][/color][/divbox]
+[list]
+[*] [b]Purpose:[/b] ${purpose}
+[/list]
+
+[divbox=#012849][color=white][align=center]TERMS AND AGREEMENTS[/align][/color][/divbox]
+[i]This Certificate has been requested to Police Department. All the data above will be saved permanently in our Administrative Service Offices. This certificate will show all of your databases and records during your living in San Andreas, including last charges.[/i][hr][/hr]
+
+[hr][/hr]
+[align=center]${fullname}[/align]
+[hr][/hr]
+
+[hr][/hr]
+[align=right]Commanding Officer of Detective Bureau
+Commander Eugene Niel[/align]
+[hr][/hr]
+[divbox=#f1f1f1][divbox=#20354C][color=white][align=center]LICENSE APPLICATION DECLARATION ((ISI DUA-DUANYA))[/align][/color][/divbox]
+[list=none][b]Deklarasi:[/b]
+[quote]Saya, ${fullname}, sudah membaca halaman [url=https://police-state.site/viewtopic.php?t=6]GCLU Hours[/url] dengan benar dan tahu pada jam berapa saja saya harus datang. 
+Saya, ${fullname} juga setuju bahwa jika saya [b]MASIH[/b] menggunakan [i]666/911[/i] untuk menanyakan sesuatu yang sudah tertera di GCLU Hours, saya akan menerima konsekuensi, yaitu [b]form saya ditolak secara langsung[/b].[/quote]
+
+[b]Declaration:[/b]
+[quote]I, ${fullname}, have read and understood the [url=https://police-state.site/viewtopic.php?t=6]GCLU Hours[/url] page and know at what time should I come.
+I, ${fullname}, have agreed that my form will be [b]DENIED immediately[/b] should I still ask about something that has already been informed over GCLU Hours, over the 666/911 hotline.[/quote]
+
+Los Santos, ${date}
+[u]${signature}[/u][/divbox]`;
+
+      document.getElementById('result').textContent = bbcode;
+    });
+
+    document.getElementById('copy').addEventListener('click', () => {
+      const result = document.getElementById('result').textContent;
+      navigator.clipboard.writeText(result).then(() => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Disalin!',
+          text: 'BBCode berhasil disalin ke clipboard.',
+          timer: 1500,
+          showConfirmButton: false
+        });
+      });
+    });
+  </script>
+</body>
+</html>
