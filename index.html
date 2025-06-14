@@ -35,20 +35,20 @@
   
 
 <div class="d-flex flex-wrap justify-content-center gap-4 px-3">
-  <a href="lisensiht.html" class="btn btn-secondary btn-lg menu-button text-center">
+  <a href="#" class="btn btn-secondary btn-lg menu-button text-center" data-menu="coming-soon">
     <i class="bi bi-file-text"></i>
     License Truck
   </a>
-  <a href="lisensiht.html" class="btn btn-secondary btn-lg menu-button text-center">
+  <a href="#" class="btn btn-secondary btn-lg menu-button text-center" data-menu="coming-soon">
     <i class="bi bi-file-text"></i>
     License Lorry
   </a>
-  <a href="cgc.html" class="btn btn-secondary btn-lg menu-button text-center">
+  <a href="cgc.html" class="btn btn-secondary btn-lg menu-button text-center" id="cgc-btn">
     <i class="bi bi-file-text"></i>
     CGC
   </a>
-
 </div>
+
 
 <!-- Bootstrap Icons -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
@@ -73,24 +73,26 @@ menuButtons.forEach(button => {
 
 </script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-// Cek apakah nama sudah ada
-if (!localStorage.getItem('namaPengunjung')) {
-  // Kalau belum login, blur hanya content, bukan seluruh body
-  document.getElementById('content').classList.add('blur-page');
 
-  // Tampilkan popup warning
-  Swal.fire({
-    icon: 'warning',
-    title: 'Akses Ditolak!',
-    text: 'Anda belum masuk. Silakan kembali ke Home (index.html) untuk memasukkan nama Anda!',
-    confirmButtonText: 'Kembali ke Home'
-  }).then((result) => {
-    if (result.isConfirmed) {
-      window.location.href = "index.html";
+<script>
+document.querySelectorAll('.menu-button').forEach(button => {
+  button.addEventListener('click', function (e) {
+    // Cek apakah tombol ini adalah CGC
+    const isCGC = this.id === 'cgc-btn';
+
+    if (!isCGC) {
+      e.preventDefault(); // Cegah buka halaman
+      Swal.fire({
+        icon: 'info',
+        title: 'Segera Hadir!',
+        text: 'Fitur ini akan dirilis secepatnya!',
+        confirmButtonText: 'Tutup'
+      });
     }
   });
-}
+});
+</script>
 
+  
 </body>
 </html>
