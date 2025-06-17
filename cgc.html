@@ -146,6 +146,37 @@ Los Santos, ${date}
         });
       });
     });
+window.addEventListener('load', () => {
+  Swal.fire({
+    title: 'Panduan Penggunaan',
+    html: `
+      <p>Sebelum menggunakan aplikasi ini, silakan tonton video tutorial di bawah ini:</p>
+      <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;margin-bottom:1rem;">
+        <iframe src="https://www.youtube.com/embed/KxgyM_whpME" 
+                frameborder="0" allowfullscreen 
+                style="position:absolute;top:0;left:0;width:100%;height:100%;">
+        </iframe>
+      </div>
+      <div class="d-flex justify-content-between">
+        <button id="subscribe-btn" class="swal2-cancel swal2-styled" style="background-color:#ff0000;">Subscribe Channel</button>
+        <button id="understand-btn" class="swal2-confirm swal2-styled">Saya Mengerti</button>
+      </div>
+    `,
+    showConfirmButton: false,
+    showCancelButton: false,
+    allowOutsideClick: false,
+    width: 800,
+    didOpen: () => {
+      document.getElementById('subscribe-btn').addEventListener('click', () => {
+        window.open('https://www.youtube.com/@YudaKyojin?sub_confirmation=1', '_blank');
+      });
+      document.getElementById('understand-btn').addEventListener('click', () => {
+        Swal.close();
+      });
+    }
+  });
+});
   </script>
+  
 </body>
 </html>
