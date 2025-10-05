@@ -72,29 +72,10 @@ menuButtons.forEach(button => {
 });
 
 </script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-<script>
-document.querySelectorAll('.menu-button').forEach(button => {
-  button.addEventListener('click', function (e) {
-    // Cek apakah tombol ini adalah CGC
-    const isCGC = this.id === 'cgc-btn';
-
-    if (!isCGC) {
-      e.preventDefault(); // Cegah buka halaman
-      Swal.fire({
-        icon: 'info',
-        title: 'Segera Hadir!',
-        text: 'Fitur ini akan dirilis secepatnya!',
-        confirmButtonText: 'Tutup'
-      });
-    }
-  });
-});
-</script>
 
   
 </body>
 </html>
+
 
 
