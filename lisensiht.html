@@ -1,277 +1,314 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BBCode Generator - License Application</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SAPD License Application — BBCode Converter</title>
   <style>
-    body {
-      background-color: #f8f9fa;
-      color: #212529;
+    :root{
+      --bg:#071129; --card:#0f1b2b; --accent:#1e90ff; --muted:#9fb2c8; --danger:#ff6b6b;
+      --glass: rgba(255,255,255,0.03);
     }
-    .form-control {
-      background-color: #ffffff;
-      color: #212529;
-      border: 1px solid #ced4da;
-    }
-    .btn-custom {
-      background-color: #0d6efd;
-      border: none;
-      color: white;
-    }
-    .spinner-border {
-      width: 1.5rem;
-      height: 1.5rem;
-    }
+    *{box-sizing:border-box;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial}
+    body{margin:0;background:linear-gradient(180deg,var(--bg),#07102a);color:#e6f0fb;padding:28px}
+    .container{max-width:1100px;margin:0 auto}
+    header{display:flex;gap:16px;align-items:center;margin-bottom:14px}
+    .logo{width:64px;height:64px;background:linear-gradient(180deg,#fff,#dbeeff);border-radius:12px;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(0,0,0,.5);overflow:hidden}
+    .logo img{width:56px;height:56px;object-fit:contain;display:block}
+    h1{margin:0;font-size:20px}
+    p.lead{margin:4px 0 0;color:var(--muted);font-size:13px}
 
-    .modal {
-  display: none;
-  position: fixed;
-  z-index: 1000;
-  left: 0; top: 0;
-  width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.6);
+    .card{background:linear-gradient(180deg,var(--card),#071626);padding:18px;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.6)}
+    .grid{display:grid;grid-template-columns:1fr 380px;gap:18px}
+    @media(max-width:920px){ .grid{grid-template-columns:1fr} }
+
+    .section{background:var(--glass);padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,.03)}
+    .section h2{margin:0 0 8px;font-size:14px;color:var(--muted)}
+    .field{margin-top:10px}
+    label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+    input[type="text"], input[type="file"], textarea, select {
+  background:rgba(255,255,255,0.05); /* semitransparan biar keliatan beda */
+  border:1px solid rgba(255,255,255,.06);
+  padding:10px 12px;
+  border-radius:8px;
+  color:#eaf6ff;
+  width:100%;
+  font-size:14px;
+  appearance:none;           /* hilangkan gaya bawaan browser */
+  -webkit-appearance:none;
+  -moz-appearance:none;
 }
 
-.modal-content {
-  background: #fff;
-  margin: 10% auto;
-  padding: 0;
-  width: 80%;
-  max-width: 600px;
-  border-radius: 8px;
-  overflow: hidden;
+select {
+  background-color:#0f1b2b;  /* warna dropdown */
+  color:#eaf6ff;             /* teks */
 }
 
-.close {
-  float: right;
-  font-size: 28px;
-  margin: 10px;
-  cursor: pointer;
+option {
+  background-color:#0f1b2b;  /* latar item dropdown */
+  color:#eaf6ff;             /* warna teks dropdown */
 }
+
+    textarea{min-height:92px;resize:vertical}
+    .row{display:flex;gap:10px}
+    .small{flex:1}
+    .muted{color:var(--muted);font-size:13px}
+
+    .controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+    button{background:var(--accent);border:none;padding:10px 14px;border-radius:8px;color:#02233d;cursor:pointer;font-weight:700}
+    button.ghost{background:transparent;border:1px solid rgba(255,255,255,.06);color:var(--muted)}
+    button:disabled{opacity:.5;cursor:not-allowed}
+
+    #result{margin-top:12px;background:rgba(0,0,0,0.25);padding:10px;border-radius:8px;color:var(--muted);white-space:pre-wrap;font-family:monospace;font-size:13px;max-height:320px;overflow:auto}
+
+    .status{font-size:13px;color:var(--muted);margin-top:8px}
+    a.link{color:#8ef0c1;text-decoration:none;word-break:break-all}
+    .note{font-size:12px;color:var(--muted);margin-top:6px}
   </style>
 </head>
-<body class="container py-5">
-    <div id="youtubeModal" class="modal">
-  <div class="modal-content">
-    <span class="close">&times;</span>
-    <span>Tonton dulu sebelum membuat lisensi</span>
-    <iframe width="100%" height="315" src="https://www.youtube.com/embed/YOUTUBE_VIDEO_ID" frameborder="0" allowfullscreen></iframe>
-  </div>
-</div>
-  <h2 class="text-center mb-4">License Application BBCode Generator</h2>
-  <form id="bbcode-form">
-    <div class="mb-3">
-      <label class="form-label">Nama Lengkap:</label>
-      <input type="text" name="fullname" class="form-control">
-    </div>
-    <div class="mb-3">
-      <label class="form-label">Jenis Kelamin:</label>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo" title="SAPD Logo">
+        <img src="https://sapdssrp.github.io/assets/brand/sapd.png" alt="SAPD">
+      </div>
       <div>
-        <div class="form-check form-check-inline">
-          <input class="form-check-input" type="radio" name="gender" id="male" value="Male">
-          <label class="form-check-label" for="male">Male</label>
+        <h1>SAPD License Application Form</h1>
+        <p class="lead">Ini adalah platform permudah kalian untuk membuat lisensi truck yang dikembangkan oleh YT : YudaKyojin.</p>
+      </div>
+    </header>
+
+    <div class="card">
+      <div class="grid">
+        <!-- LEFT: Personal Information -->
+        <div class="section">
+          <h2>Personal Information</h2>
+
+          <div class="field">
+            <label for="fullname">Nama Lengkap</label>
+            <input id="fullname" type="text" placeholder="Firstname Lastname" />
+          </div>
+
+          <div class="field">
+            <label for="gender">Jenis Kelamin</label>
+            <select id="gender">
+              <option value="">-- Pilih Jenis Kelamin --</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div class="row" style="margin-top:10px">
+            <div class="field small">
+              <label for="dob">Tanggal Lahir</label>
+              <input id="dob" type="text" placeholder="DD/MM/YYYY" maxlength="10" />
+            </div>
+            <div class="field small">
+              <label for="phone">Nomor HP</label>
+              <input id="phone" type="text" placeholder="08123456789" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="address">Alamat</label>
+            <textarea id="address" placeholder="Isi alamat di sini"></textarea>
+          </div>
+
+          <div class="field">
+            <label for="licenseFile">Licenses (Upload SS /showlic anda)</label>
+            <input id="licenseFile" type="file" accept="image/*" />
+            <div id="uploadStatus" class="status"></div>
+            <div class="note">Upload image akan dikirim ke Imgur automatis, cukup upload di sini saja.</div>
+          </div>
         </div>
-        <div class="form-check form-check-inline">
-          <input class="form-check-input" type="radio" name="gender" id="female" value="Female">
-          <label class="form-check-label" for="female">Female</label>
+
+        <!-- RIGHT: Declaration + action -->
+        <div class="section">
+          <h2>Declaration & Action</h2>
+
+          <div class="field">
+            <label for="date">Tanggal Sekarang</label>
+            <input id="date" type="text" placeholder="DD/MM/YYYY" maxlength="10" />
+          </div>
+
+          <div class="field">
+            <label for="signame">Nama (tanda tangan)</label>
+            <input id="signame" type="text" placeholder="Firstname_Lastname" />
+          </div>
+
+          <div class="field" style="margin-top:12px">
+            <div class="controls">
+              <button id="btnConvert">Convert to BBCode</button>
+              <button id="btnCopy" class="ghost" type="button">Copy BBCode</button>
+            </div>
+            <div id="result" aria-live="polite">Hasil BBCode akan muncul di sini setelah Convert.</div>
+          </div>
+
+          <div class="field" style="margin-top:12px">
+            <div class="muted">Preview / Tips</div>
+            <div class="note">Kalian telah setuju dengan persyaratan jika menanyakan dan meminta cepat diterima lisensi anda di 911 maupun 666, maka akan kami denied dengan paksa.</div>
+          </div>
         </div>
       </div>
     </div>
-    <div class="mb-3">
-      <label class="form-label">Tanggal lahir:</label>
-      <input type="text" name="dob" id="dob" class="form-control" placeholder="DD/MM/YYYY" maxlength="10" pattern="[0-9/]*">
-    </div>
-    <div class="mb-3">
-      <label class="form-label">Alamat</label>
-      <input type="text" name="address" class="form-control">
-    </div>
-    <div class="mb-3">
-      <label class="form-label">Phone Number</label>
-      <input type="text" name="phone" class="form-control">
-    </div>
-        <div class="mb-3 position-relative">
-      <label class="form-label">Upload License Screenshot "/showlic [ID]"</label>
-      <input type="file" name="license_file" id="license-file" class="form-control" accept="image/*">
-      <div id="upload-spinner" class="spinner-border text-primary mt-2 d-none" role="status">
-        <span class="visually-hidden">Uploading...</span>
-      </div>
-      <input type="hidden" name="license_url" id="license-url">
-    </div>
-    <div class="mb-3">
-      <label class="form-label">Signature "Nama_Lengkap"</label>
-      <input type="text" name="signature" class="form-control">
-    </div>
-    <div class="mb-3">
-      <label class="form-label">Pada tanggal hari ini:</label>
-      <input type="text" name="date" class="form-control" placeholder="DD/MMM/YYYY" maxlength="11" pattern="[0-9A-Za-z/]*">
-    </div>
-    <button type="button" id="generate" class="btn btn-custom">Generate BBCode</button>
-    <button type="button" id="copy" class="btn btn-secondary ms-2">Copy</button>
-  </form>
+  </div>
 
-  <pre id="result" class="mt-4 p-3 bg-light border rounded"></pre>
-  
-  <script>
-    async function uploadToImgur(file) {
-      const formData = new FormData();
-      formData.append('image', file);
+<script>
+/* ============================
+   Config: ganti Client ID Imgur di sini
+   ============================ */
+const IMGUR_CLIENT_ID = "894beeef6cd80f4"; // <-- GANTI DENGAN CLIENT-ID KAMU
 
-      const response = await fetch('https://api.imgur.com/3/image', {
-        method: 'POST',
-        headers: {
-          Authorization: 'Client-ID 894beeef6cd80f4'
-        },
-        body: formData
-      });
+/* State */
+let licenseURL = "";
 
-      const data = await response.json();
-      if (data.success) {
-        return data.data.link;
-      } else {
-        throw new Error('Upload gagal ke Imgur.');
-      }
+/* Helper: show upload status (dengan detail error jika ada) */
+function setStatus(html) {
+  document.getElementById('uploadStatus').innerHTML = html;
+}
+
+/* ========== Imgur upload (client-side anonymous) ========== */
+document.getElementById('licenseFile').addEventListener('change', async function () {
+  const f = this.files[0];
+  if (!f) return;
+  setStatus("Uploading to Imgur...");
+  const form = new FormData();
+  form.append('image', f);
+
+  try {
+    const res = await fetch('https://api.imgur.com/3/image', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Client-ID ' + IMGUR_CLIENT_ID
+      },
+      body: form
+    });
+
+    const json = await res.json();
+    if (res.ok && json && json.success) {
+      licenseURL = json.data.link;
+      setStatus(`✅ Uploaded: <a class="link" href="${licenseURL}" target="_blank">${licenseURL}</a>`);
+    } else {
+      // tampilkan error code / message dari API bila ada
+      const msg = json && (json.data && (json.data.error || json.data)) ? JSON.stringify(json.data) : (json && json.status ? 'Status '+json.status : 'Unknown error');
+      licenseURL = "";
+      setStatus(`❌ Upload failed: ${msg}`);
     }
+  } catch (err) {
+    console.error(err);
+    licenseURL = "";
+    setStatus(`❌ Error uploading image: ${err.message || err}`);
+  }
+});
 
-    document.getElementById('license-file').addEventListener('change', async (event) => {
-      const file = event.target.files[0];
-      const spinner = document.getElementById('upload-spinner');
-      if (file) {
-        try {
-          spinner.classList.remove('d-none');
-          const url = await uploadToImgur(file);
-          document.getElementById('license-url').value = url;
-          spinner.classList.add('d-none');
+/* ========== Auto-format tanggal DD/MM/YYYY ==========
+   Ketika user mengetik angka, karakter non-digit dihapus
+   dan tanda "/" ditambahkan otomatis.
+====================================================== */
+function autoFormatDateField(field) {
+  field.addEventListener('input', function (e) {
+    let v = e.target.value.replace(/\D/g, '').slice(0,8); // max 8 digits
+    if (v.length >= 5) {
+      v = v.slice(0,2) + '/' + v.slice(2,4) + '/' + v.slice(4);
+    } else if (v.length >= 3) {
+      v = v.slice(0,2) + '/' + v.slice(2);
+    }
+    e.target.value = v;
+  });
 
-          Swal.fire({
-            icon: 'success',
-            title: 'Upload Berhasil',
-            text: 'Gambar berhasil diupload ke Imgur!',
-            timer: 1500,
-            showConfirmButton: false
-          });
-        } catch (error) {
-          spinner.classList.add('d-none');
-          Swal.fire({
-            icon: 'error',
-            title: 'Upload Gagal',
-            text: error.message
-          });
-        }
-      }
-    });
+  // optional: prevent non-digit keys except control/navigation
+  field.addEventListener('keydown', function (e) {
+    // allow: backspace, tab, arrow keys, delete
+    const allowed = ['Backspace','Tab','ArrowLeft','ArrowRight','Delete','Home','End'];
+    if (allowed.includes(e.key)) return;
+    // allow digits only
+    if (!/^\d$/.test(e.key)) e.preventDefault();
+  });
+}
 
-// Auto format DDMMYYYY to DD/MM/YYYY for Date of Birth input
-    document.getElementById('dob').addEventListener('input', function (e) {
-      let val = e.target.value.replace(/\D/g, '').slice(0, 8);
-      if (val.length >= 5) {
-        val = val.slice(0, 2) + '/' + val.slice(2, 4) + '/' + val.slice(4);
-      } else if (val.length >= 3) {
-        val = val.slice(0, 2) + '/' + val.slice(2);
-      }
-      e.target.value = val;
-    });
-    
+autoFormatDateField(document.getElementById('dob'));
+autoFormatDateField(document.getElementById('date'));
 
-    // Auto format DDMMYYYY to DD/MM/YYYY for Today's Date input
-    document.querySelector('input[name="date"]').addEventListener('input', function (e) {
-      let val = e.target.value.replace(/\D/g, '').slice(0, 8);
-      if (val.length >= 5) {
-        val = val.slice(0, 2) + '/' + val.slice(2, 4) + '/' + val.slice(4);
-      } else if (val.length >= 3) {
-        val = val.slice(0, 2) + '/' + val.slice(2);
-      }
-      e.target.value = val;
-    });
+/* ========== Convert to BBCode ========== */
+function generateBBCodeString() {
+  const fullname = document.getElementById('fullname').value.trim();
+  const gender = document.getElementById('gender').value;
+  const dob = document.getElementById('dob').value.trim();
+  const address = document.getElementById('address').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  const date = document.getElementById('date').value.trim();
+  const signame = document.getElementById('signame').value.trim();
 
-    document.getElementById('generate').addEventListener('click', () => {
-      const form = document.forms['bbcode-form'];
+  // fallback placeholders
+  const licenseField = licenseURL || 'ISI SS LISENSI KALIAN DISINI';
 
-      const fullname = (form['fullname'].value);
-      const gender = form['gender'].value;
-      const dob = (form['dob'].value);
-      const address = (form['address'].value);
-      const phone = form['phone'].value;
-      const licenseUrl = form['license_url'].value;
-      const signature = (form['signature'].value);
-      const date = (form['date'].value);
-
-      const bbcode = `[divbox=white][align=center][img]https://i.imgur.com/bHbMbUf.png[/img][/align]
+  const bb = `[divbox=white][align=center][img]https://i.imgur.com/ZGWFDMR.png[/img]
+[/align]
 [divbox=grey][color=white][align=center]PERSONAL INFORMATION[/align][/color][/divbox]
 [list=none]
 [b]1.[/b] FULL NAME [b]:[/b]
 [list=none]
-${fullname}
+${fullname || '<Answer Here>'}
 [/list]
 [b]2.[/b] GENDER [b]:[/b]
 [list=none]
-${gender}
+${gender || '<Answer Here>'}
 [/list]
 [b]3.[/b] DATE OF BIRTH [b]:[/b]
 [list=none]
-${dob}
+${dob || '<DD/MM/YYYY>'}
 [/list]
 [b]4.[/b] ADDRESS [b]:[/b]
 [list=none]
-${address}
+${address || '<Answer Here>'}
 [/list]
 [b]5.[/b] PHONE NUMBER [b]:[/b]
 [list=none]
-${phone}
+${phone || '<Answer Here>'}
 [/list]
 [b]6.[/b] LICENSES [b]:[/b]
-[list=none][img]${licenseUrl}[/img][size=1][color=transparant](( GUNAKAN IMGUR.COM ATAU UPLOAD.EE))[/color][/size][/list]
+[list=none][img]${licenseField}[/img][size=1][color=transparant](( GUNAKAN IMGUR.COM ATAU UPLOAD.EE))[/color][/size][/list]
 [/list]
 
 [divbox=grey][color=white][align=center]TERMS AND AGREEMENT[/align][/color][/divbox]
 [quote]I hereby declare that I will follow and obey all the rules stated inside Trucking License Information and Regulations and inside SAPD Penal Code. If I caught violating or opposing the rules, I'm willing to get my license revoked, my truck impounded, fined, and/or jailed.[/quote]
 
-Los Santos, ${date}
+Los Santos, ${date || '<DD/MMM/YYYY>'}
 
-[i]${signature}[/i][/divbox]
+[i]${signame || '(Firstname Lastname)'}[/i][/divbox]
 [divbox=white][divbox=grey][color=white][align=center]LICENSE APPLICATION DECLARATION [size=1][color=transparant]((ISI DUA-DUANYA))[/align][/color][/size][/color][/divbox]
 [list=none][b]Deklarasi:[/b]
-[quote]Saya, ${fullname}, sudah membaca halaman [url=https://police-state.site/viewtopic.php?t=6]GCLU Hours[/url] dengan benar dan tahu pada jam berapa saja saya harus datang. 
-Saya, ${fullname} juga setuju bahwa jika saya [b]MASIH[/b] menggunakan [i]666 / 911[/i] untuk menanyakan sesuatu yang sudah tertera di GCLU Hours, saya akan menerima konsekuensi, yaitu [b]form saya ditolak secara langsung[/b].[/quote]
+[quote]Saya, (${signame || '(Nama Anda)'}), sudah membaca halaman [url=https://police-state.site/viewtopic.php?t=6]GCLU Hours[/url] dengan benar dan tahu pada jam berapa saja saya harus datang. 
+Saya, (${signame || '(Nama Anda)'}) juga setuju bahwa jika saya [b]MASIH[/b] menggunakan [i]666 / 911[/i] untuk menanyakan sesuatu yang sudah tertera di GCLU Hours, saya akan menerima konsekuensi, yaitu [b]form saya ditolak secara langsung[/b].[/list][/quote]
 
-[b]Declaration:[/b]
-[quote]I, ${fullname}, have read and understood the [url=https://police-state.site/viewtopic.php?t=6]GCLU Hours[/url] page and know at what time should I come.
-I, ${fullname}, have agreed that my form will be [b]DENIED immediately[/b] should I still ask about something that has already been informed over GCLU Hours, over the 666/911 hotline.[/quote]
+[list=none][b]Declaration:[/b]
+[quote]I, (${signame || '(Nama Anda)'}), have read and understood the [url=https://police-state.site/viewtopic.php?t=6]GCLU Hours[/url] page and know at what time should I come.
+I, (${signame || '(Nama Anda)'}), have agreed that my form will be [b]DENIED immediately[/b] should I still ask about something that has already been informed over GCLU Hours, over the 666/911 hotline.[/list][/quote]
 
-Los Santos, ${date}
-[u]${signature}[/u][/divbox]`;
+Los Santos, ${date || '<DD/MMM/YYYY>'}
+[u](${signame || '(Nama Anda)'})[/u][/divbox]`;
 
-      document.getElementById('result').textContent = bbcode;
-    });
+  return bb;
+}
 
-    document.getElementById('copy').addEventListener('click', () => {
-      const result = document.getElementById('result').textContent;
-      navigator.clipboard.writeText(result).then(() => {
-        Swal.fire({
-          icon: 'success',
-          title: 'Disalin!',
-          text: 'BBCode berhasil disalin ke clipboard.',
-          timer: 1500,
-          showConfirmButton: false
-        });
-      });
-    });
-  </script>
- <script>
-  window.onload = function() {
-    document.getElementById("youtubeModal").style.display = "block";
-  };
+/* ========== Buttons: Convert & Copy ========== */
+document.getElementById('btnConvert').addEventListener('click', function () {
+  const out = generateBBCodeString();
+  document.getElementById('result').textContent = out;
+});
 
-  document.querySelector(".close").onclick = function() {
-    document.getElementById("youtubeModal").style.display = "none";
-  };
-
-  window.onclick = function(e) {
-    if (e.target === document.getElementById("youtubeModal")) {
-      document.getElementById("youtubeModal").style.display = "none";}
-  };
+document.getElementById('btnCopy').addEventListener('click', function () {
+  const txt = document.getElementById('result').textContent;
+  if (!txt) { alert('Tidak ada BBCode untuk di-copy — tekan Convert terlebih dahulu.'); return; }
+  navigator.clipboard.writeText(txt).then(()=> {
+    const b = document.getElementById('btnCopy');
+    b.textContent = 'Copied ✓';
+    setTimeout(()=> b.textContent = 'Copy BBCode', 1000);
+  }).catch(err=>{
+    alert('Gagal copy ke clipboard: ' + err);
+  });
+});
 </script>
 </body>
 </html>
