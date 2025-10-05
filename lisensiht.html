@@ -164,11 +164,11 @@ const IMGUR_CLIENT_ID = "894beeef6cd80f4"; // <-- GANTI DENGAN CLIENT-ID KAMU
 let licenseURL = "";
 
 /* Helper: show upload status (dengan detail error jika ada) */
+
 function setStatus(html) {
   document.getElementById('uploadStatus').innerHTML = html;
 }
 
-/* ========== Imgur upload (client-side anonymous) ========== */
 document.getElementById('licenseFile').addEventListener('change', async function () {
   const f = this.files[0];
   if (!f) return;
@@ -179,58 +179,37 @@ document.getElementById('licenseFile').addEventListener('change', async function
   try {
     const res = await fetch('https://api.imgur.com/3/image', {
       method: 'POST',
-      headers: {
-        Authorization: 'Client-ID ' + IMGUR_CLIENT_ID
-      },
+      headers: { Authorization: 'Client-ID ' + IMGUR_CLIENT_ID },
       body: form
     });
-
     const json = await res.json();
     if (res.ok && json && json.success) {
       licenseURL = json.data.link;
       setStatus(`✅ Uploaded: <a class="link" href="${licenseURL}" target="_blank">${licenseURL}</a>`);
     } else {
-      // tampilkan error code / message dari API bila ada
-      const msg = json && (json.data && (json.data.error || json.data)) ? JSON.stringify(json.data) : (json && json.status ? 'Status '+json.status : 'Unknown error');
       licenseURL = "";
-      setStatus(`❌ Upload failed: ${msg}`);
+      setStatus(`❌ Upload failed.`);
     }
+    checkFormCompletion();
   } catch (err) {
-    console.error(err);
     licenseURL = "";
     setStatus(`❌ Error uploading image: ${err.message || err}`);
+    checkFormCompletion();
   }
 });
 
-/* ========== Auto-format tanggal DD/MM/YYYY ==========
-   Ketika user mengetik angka, karakter non-digit dihapus
-   dan tanda "/" ditambahkan otomatis.
-====================================================== */
 function autoFormatDateField(field) {
   field.addEventListener('input', function (e) {
-    let v = e.target.value.replace(/\D/g, '').slice(0,8); // max 8 digits
-    if (v.length >= 5) {
-      v = v.slice(0,2) + '/' + v.slice(2,4) + '/' + v.slice(4);
-    } else if (v.length >= 3) {
-      v = v.slice(0,2) + '/' + v.slice(2);
-    }
+    let v = e.target.value.replace(/\D/g, '').slice(0,8);
+    if (v.length >= 5) v = v.slice(0,2) + '/' + v.slice(2,4) + '/' + v.slice(4);
+    else if (v.length >= 3) v = v.slice(0,2) + '/' + v.slice(2);
     e.target.value = v;
-  });
-
-  // optional: prevent non-digit keys except control/navigation
-  field.addEventListener('keydown', function (e) {
-    // allow: backspace, tab, arrow keys, delete
-    const allowed = ['Backspace','Tab','ArrowLeft','ArrowRight','Delete','Home','End'];
-    if (allowed.includes(e.key)) return;
-    // allow digits only
-    if (!/^\d$/.test(e.key)) e.preventDefault();
+    checkFormCompletion();
   });
 }
-
 autoFormatDateField(document.getElementById('dob'));
 autoFormatDateField(document.getElementById('date'));
 
-/* ========== Convert to BBCode ========== */
 function generateBBCodeString() {
   const fullname = document.getElementById('fullname').value.trim();
   const gender = document.getElementById('gender').value;
@@ -239,76 +218,220 @@ function generateBBCodeString() {
   const phone = document.getElementById('phone').value.trim();
   const date = document.getElementById('date').value.trim();
   const signame = document.getElementById('signame').value.trim();
-
-  // fallback placeholders
   const licenseField = licenseURL || 'ISI SS LISENSI KALIAN DISINI';
-
-  const bb = `[divbox=white][align=center][img]https://i.imgur.com/ZGWFDMR.png[/img]
+  
+  return `[divbox=white][align=center][img]https://i.imgur.com/ZGWFDMR.png[/img]
 [/align]
 [divbox=grey][color=white][align=center]PERSONAL INFORMATION[/align][/color][/divbox]
 [list=none]
 [b]1.[/b] FULL NAME [b]:[/b]
 [list=none]
-${fullname || '<Answer Here>'}
+${fullname}
 [/list]
 [b]2.[/b] GENDER [b]:[/b]
 [list=none]
-${gender || '<Answer Here>'}
+${gender}
 [/list]
 [b]3.[/b] DATE OF BIRTH [b]:[/b]
 [list=none]
-${dob || '<DD/MM/YYYY>'}
+${dob}
 [/list]
 [b]4.[/b] ADDRESS [b]:[/b]
 [list=none]
-${address || '<Answer Here>'}
+${address}
 [/list]
 [b]5.[/b] PHONE NUMBER [b]:[/b]
 [list=none]
-${phone || '<Answer Here>'}
+${phone}
 [/list]
 [b]6.[/b] LICENSES [b]:[/b]
-[list=none][img]${licenseField}[/img][size=1][color=transparant](( GUNAKAN IMGUR.COM ATAU UPLOAD.EE))[/color][/size][/list]
+[list=none][img]${licenseField}[/img][/list]
 [/list]
 
-[divbox=grey][color=white][align=center]TERMS AND AGREEMENT[/align][/color][/divbox]
-[quote]I hereby declare that I will follow and obey all the rules stated inside Trucking License Information and Regulations and inside SAPD Penal Code. If I caught violating or opposing the rules, I'm willing to get my license revoked, my truck impounded, fined, and/or jailed.[/quote]
+Los Santos, ${date}
 
-Los Santos, ${date || '<DD/MMM/YYYY>'}
-
-[i]${signame || '(Firstname Lastname)'}[/i][/divbox]
-[divbox=white][divbox=grey][color=white][align=center]LICENSE APPLICATION DECLARATION [size=1][color=transparant]((ISI DUA-DUANYA))[/align][/color][/size][/color][/divbox]
-[list=none][b]Deklarasi:[/b]
-[quote]Saya, (${signame || '(Nama Anda)'}), sudah membaca halaman [url=https://police-state.site/viewtopic.php?t=6]GCLU Hours[/url] dengan benar dan tahu pada jam berapa saja saya harus datang. 
-Saya, (${signame || '(Nama Anda)'}) juga setuju bahwa jika saya [b]MASIH[/b] menggunakan [i]666 / 911[/i] untuk menanyakan sesuatu yang sudah tertera di GCLU Hours, saya akan menerima konsekuensi, yaitu [b]form saya ditolak secara langsung[/b].[/list][/quote]
-
-[list=none][b]Declaration:[/b]
-[quote]I, (${signame || '(Nama Anda)'}), have read and understood the [url=https://police-state.site/viewtopic.php?t=6]GCLU Hours[/url] page and know at what time should I come.
-I, (${signame || '(Nama Anda)'}), have agreed that my form will be [b]DENIED immediately[/b] should I still ask about something that has already been informed over GCLU Hours, over the 666/911 hotline.[/list][/quote]
-
-Los Santos, ${date || '<DD/MMM/YYYY>'}
-[u](${signame || '(Nama Anda)'})[/u][/divbox]`;
-
-  return bb;
+[i]${signame}[/i][/divbox]`;
 }
 
-/* ========== Buttons: Convert & Copy ========== */
-document.getElementById('btnConvert').addEventListener('click', function () {
+// === Tombol Convert dan Copy ===
+const convertBtn = document.getElementById('btnConvert');
+const copyBtn = document.getElementById('btnCopy');
+
+convertBtn.addEventListener('click', function () {
   const out = generateBBCodeString();
   document.getElementById('result').textContent = out;
 });
 
-document.getElementById('btnCopy').addEventListener('click', function () {
+copyBtn.addEventListener('click', function () {
   const txt = document.getElementById('result').textContent;
   if (!txt) { alert('Tidak ada BBCode untuk di-copy — tekan Convert terlebih dahulu.'); return; }
   navigator.clipboard.writeText(txt).then(()=> {
-    const b = document.getElementById('btnCopy');
-    b.textContent = 'Copied ✓';
-    setTimeout(()=> b.textContent = 'Copy BBCode', 1000);
-  }).catch(err=>{
-    alert('Gagal copy ke clipboard: ' + err);
+    copyBtn.textContent = 'Copied ✓';
+    setTimeout(()=> copyBtn.textContent = 'Copy BBCode', 1000);
+  });
+});
+
+// === Periksa apakah semua field sudah diisi ===
+const requiredFields = ['fullname','gender','dob','address','phone','date','signame'];
+requiredFields.forEach(id => {
+  document.getElementById(id).addEventListener('input', checkFormCompletion);
+});
+
+function checkFormCompletion() {
+  let allFilled = true;
+  requiredFields.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el.value.trim()) allFilled = false;
+  });
+  if (!licenseURL) allFilled = false;
+
+  convertBtn.disabled = !allFilled;
+  convertBtn.style.opacity = allFilled ? "1" : "0.5";
+  convertBtn.style.cursor = allFilled ? "pointer" : "not-allowed";
+}
+
+// === Matikan tombol convert saat awal ===
+document.addEventListener('DOMContentLoaded', () => {
+  convertBtn.disabled = true;
+  convertBtn.style.opacity = "0.5";
+});
+</script>
+</script>
+<!-- POPUP VIDEO TUTORIAL (harus ditonton sampai selesai) -->
+<div id="videoPopup" class="popup-overlay">
+  <div class="popup-card">
+    <div class="popup-header">
+      <img src="https://sapdssrp.github.io/assets/brand/sapd.png" alt="SAPD" class="popup-logo">
+      <h2>Watch the Tutorial Before Proceeding</h2>
+    </div>
+    <p class="popup-desc">
+      Tonton videonya agar bisa menekan tombol close.
+    </p>
+
+    <div class="video-box">
+      <div id="player"></div>
+    </div>
+
+    <button id="closePopup" disabled class="disabled-btn">Close</button>
+    <p id="note" class="note">Jangan lupa subcribe ya :) </p>
+  </div>
+</div>
+
+<style>
+/* === Popup Styles === */
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+.popup-card {
+  background: #0f1b2b;
+  border-radius: 12px;
+  padding: 22px;
+  width: 90%;
+  max-width: 560px;
+  text-align: center;
+  color: #eaf6ff;
+  box-shadow: 0 0 20px rgba(0,0,0,0.6);
+}
+.popup-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.popup-logo {
+  width: 64px;
+  height: 64px;
+}
+.popup-card h2 {
+  margin: 0;
+  font-size: 18px;
+  color: #9fb2c8;
+}
+.popup-desc {
+  font-size: 13px;
+  color: #9fb2c8;
+  margin-bottom: 12px;
+}
+.video-box {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%; /* 16:9 */
+  background: rgba(255,255,255,0.05);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+.video-box iframe,
+#player {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+}
+#closePopup {
+  background: #1e90ff;
+  color: #021d35;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+#closePopup.disabled-btn {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.note {
+  margin-top: 8px;
+  color: #9fb2c8;
+  font-size: 12px;
+}
+</style>
+
+<!-- === YouTube IFrame API === -->
+<script src="https://www.youtube.com/iframe_api"></script>
+
+<script>
+let player;
+
+function onYouTubeIframeAPIReady() {
+  player = new YT.Player('player', {
+    height: '315',
+    width: '560',
+    videoId: 'QqTvaQ8j1Po', // <<-- Video kamu
+    playerVars: { 'controls': 1, 'disablekb': 1 },
+    events: {
+      'onStateChange': onPlayerStateChange
+    }
+  });
+}
+
+function onPlayerStateChange(event) {
+  const closeBtn = document.getElementById('closePopup');
+  if (event.data === YT.PlayerState.ENDED) {
+    closeBtn.disabled = false;
+    closeBtn.classList.remove('disabled-btn');
+    document.getElementById('note').textContent = "✅ Kamu bisa tutup notifikasi ini.";
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const popup = document.getElementById('videoPopup');
+  const closeBtn = document.getElementById('closePopup');
+
+  closeBtn.addEventListener('click', () => {
+    if (!closeBtn.disabled) popup.style.display = 'none';
   });
 });
 </script>
+
 </body>
 </html>
