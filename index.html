@@ -1,81 +1,163 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Panel SAPD</title>
-  <!-- Bootstrap 5 CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <!-- Ikon Bootstrap (opsional) -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SAPD License Portal — Under Maintenance</title>
   <style>
-    /* Gaya tambahan */
+    :root {
+      --bg: #060d1f;
+      --card: #101d33;
+      --accent: #1e90ff;
+      --muted: #b7c6de;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
-      background-color: #f8f9fa;
+      background: radial-gradient(circle at top, #0a1430, var(--bg));
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+      overflow: hidden;
     }
-    .sidebar {
-      min-height: 100vh;
-      background-color: #343a40;
+
+    .card {
+      background: var(--card);
+      padding: 32px 26px;
+      border-radius: 14px;
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
+      max-width: 420px;
+      width: 90%;
+      animation: fadeIn 0.8s ease forwards;
     }
-    .sidebar .nav-link {
-      color: #ffffff;
+
+    .logo {
+      width: 90px;
+      height: 90px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 14px auto;
     }
-    .sidebar .nav-link.active {
-      background-color: #495057;
+
+    .logo img {
+      width: 72px;
+      height: 72px;
     }
-    .content {
-      padding: 20px;
+
+    h1 {
+      color: #fff;
+      font-size: 22px;
+      margin-bottom: 8px;
+      letter-spacing: 0.4px;
+    }
+
+    p {
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .loader {
+      border: 4px solid rgba(255, 255, 255, 0.1);
+      border-top: 4px solid var(--accent);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      margin: 0 auto 14px auto;
+      animation: spin 1.2s linear infinite;
+    }
+
+    .countdown {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .contact {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 8px;
+      opacity: 0.8;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   </style>
-
 </head>
-<body class="bg-dark text-white d-flex flex-column justify-content-center align-items-center" style="height: 100vh;">
-  <img src="asb.png" alt="Logo" class="logo mb-3">
-  <h1 class="mb-5 text-center">SAPD-ADMINISTRATIVE</h1>
-  
+<body>
+  <div class="card">
+    <div class="logo">
+      <img src="https://sapdssrp.github.io/assets/brand/sapd.png" alt="SAPD Logo">
+    </div>
+    <h1>UNDER MAINTENANCE</h1>
+    <div class="loader"></div>
+    <p>
+      Maaf, portal <b>SAPD License Application</b> sedang dalam pemeliharaan sistem.<br>
+      Silakan kembali lagi nanti.
+    </p>
 
-<div class="d-flex flex-wrap justify-content-center gap-4 px-3">
-  <a href="lisensiht.html" class="btn btn-secondary btn-lg menu-button text-center">
-    <i class="bi bi-file-text"></i>
-    License Truck
-  </a>
-  <a href="lisensiht.html" class="btn btn-secondary btn-lg menu-button text-center">
-    <i class="bi bi-file-text"></i>
-    License Lorry
-  </a>
-  <a href="cgc.html" class="btn btn-secondary btn-lg menu-button text-center" id="cgc-btn">
-    <i class="bi bi-file-text"></i>
-    CGC
-  </a>
-</div>
+    <div class="countdown" id="countdown">00:00:00</div>
+    <p style="font-size:12px;">Selesai pada pukul <b>12:00 WIB</b></p>
 
+    <div class="contact">
+      — Developed by <a href="https://youtube.com/@YudaKyojin" target="_blank">YudaKyojin</a> —
+    </div>
+  </div>
 
-<!-- Bootstrap Icons -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-<script>
-// Ambil semua tombol menu
-const menuButtons = document.querySelectorAll('.menu-button');
+  <script>
+    // Atur jam target ke 12:00 WIB hari ini
+    const now = new Date();
+    const target = new Date();
+    target.setHours(12, 0, 0, 0);
 
-// Saat klik tombol
-menuButtons.forEach(button => {
-  button.addEventListener('click', function() {
-    // Hapus semua tombol menjadi abu-abu
-    menuButtons.forEach(btn => btn.classList.remove('btn-primary', 'btn-secondary'));
-    
-    // Reset semua tombol ke abu-abu dulu
-    menuButtons.forEach(btn => btn.classList.add('btn-secondary'));
+    // Jika sudah lewat jam 12:00, set ke hari berikutnya jam 12:00
+    if (now > target) target.setDate(target.getDate() + 1);
 
-    // Ubah tombol yang diklik menjadi biru
-    this.classList.remove('btn-secondary');
-    this.classList.add('btn-primary');
-  });
-});
+    const countdownEl = document.getElementById("countdown");
 
-</script>
+    const timer = setInterval(() => {
+      const nowTime = new Date().getTime();
+      const distance = target - nowTime;
 
-  
+      if (distance <= 0) {
+        clearInterval(timer);
+        countdownEl.textContent = "00:00:00";
+        window.location.href = "lisensi.html"; // redirect setelah selesai
+        return;
+      }
+
+      const hours = Math.floor((distance / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((distance / (1000 * 60)) % 60);
+      const seconds = Math.floor((distance / 1000) % 60);
+
+      countdownEl.textContent =
+        `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+    }, 1000);
+  </script>
 </body>
 </html>
-
-
-
