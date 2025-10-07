@@ -211,14 +211,18 @@ autoFormatDateField(document.getElementById('dob'));
 autoFormatDateField(document.getElementById('date'));
 
 function generateBBCodeString() {
-  const fullname = document.getElementById('fullname').value.trim();
+  let fullname = document.getElementById('fullname').value.trim();
   const gender = document.getElementById('gender').value;
   const dob = document.getElementById('dob').value.trim();
   const address = document.getElementById('address').value.trim();
   const phone = document.getElementById('phone').value.trim();
   const date = document.getElementById('date').value.trim();
-  const signame = document.getElementById('signame').value.trim();
+  let signame = document.getElementById('signame').value.trim();
   const licenseField = licenseURL || 'ISI SS LISENSI KALIAN DISINI';
+
+  // Hilangkan underscore (_) dan ubah ke spasi
+  fullname = fullname.replace(/_/g, " ");
+  signame = signame.replace(/_/g, " ");
 
   return `[divbox=white][align=center][img]https://i.imgur.com/ZGWFDMR.png[/img]
 [/align]
@@ -257,12 +261,12 @@ Los Santos, ${date}
 [divbox=white][divbox=grey][color=white][align=center]LICENSE APPLICATION DECLARATION [size=1][color=transparant]((ISI DUA-DUANYA))[/color][/size][/align][/color][/divbox]
 
 [list=none][b]Deklarasi:[/b]
-[quote]Saya, (${fullname}), sudah membaca halaman [url=https://police-state.site/viewtopic.php?t=6]GCLU Hours[/url] dengan benar dan tahu pada jam berapa saja saya harus datang. 
-Saya, (${fullname}) juga setuju bahwa jika saya [b]MASIH[/b] menggunakan [i]666 / 911[/i] untuk menanyakan sesuatu yang sudah tertera di GCLU Hours, saya akan menerima konsekuensi, yaitu [b]form saya ditolak secara langsung[/b].[/quote]
+[quote]Saya, ${fullname}, sudah membaca halaman [url=https://police-state.site/viewtopic.php?t=6]GCLU Hours[/url] dengan benar dan tahu pada jam berapa saja saya harus datang. 
+Saya, ${fullname} juga setuju bahwa jika saya [b]MASIH[/b] menggunakan [i]666 / 911[/i] untuk menanyakan sesuatu yang sudah tertera di GCLU Hours, saya akan menerima konsekuensi, yaitu [b]form saya ditolak secara langsung[/b].[/quote]
 
-[b]Declaration:[/b]
-[quote]I, (${fullname}), have read and understood the [url=https://police-state.site/viewtopic.php?t=6]GCLU Hours[/url] page and know at what time should I come.
-I, (${fullname}), have agreed that my form will be [b]DENIED immediately[/b] should I still ask about something that has already been informed over GCLU Hours, over the 666/911 hotline.[/quote]
+[list=none][b]Declaration:[/b]
+[quote]I, ${fullname}, have read and understood the [url=https://police-state.site/viewtopic.php?t=6]GCLU Hours[/url] page and know at what time should I come.
+I, ${fullname}, have agreed that my form will be [b]DENIED immediately[/b] should I still ask about something that has already been informed over GCLU Hours, over the 666/911 hotline.[/quote]
 
 Los Santos, ${date}
 [u]${signame}[/u][/divbox]`;
@@ -451,3 +455,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
